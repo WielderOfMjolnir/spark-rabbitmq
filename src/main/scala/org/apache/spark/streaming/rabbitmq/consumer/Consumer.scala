@@ -141,6 +141,8 @@ class Consumer(val channel: Channel, params: Map[String, String]) extends Loggin
 
     log.debug(s"Declaring Queue: $queue")
 
+    channel.queueDeclarePassive(queue)
+    /*
     channel.queueDeclare(
       queue,
       queueConnectionOpts.durable,
@@ -148,6 +150,7 @@ class Consumer(val channel: Channel, params: Map[String, String]) extends Loggin
       queueConnectionOpts.autoDelete,
       queueParams
     )
+    */
 
     if (exchangeAndRouting.exchangeName.isDefined && exchangeAndRouting.exchangeType.isDefined) {
       log.debug(s"Declaring Exchange: ${exchangeAndRouting.exchangeName.get} with type:" +
@@ -201,6 +204,7 @@ object Consumer extends Logging with ConsumerParamsUtils {
 
   def apply(params: Map[String, String]): Consumer = {
 
+    setSslUsage(params)
     setVirtualHost(params)
     setUserPassword(params)
 
@@ -221,6 +225,18 @@ object Consumer extends Logging with ConsumerParamsUtils {
         connection.close()
       connections.remove(key)
     }
+
+  private def setSslUsage(params: Map[String, String]) : Unit = {
+    val useSsl = params.get(UseSslKey)
+
+    useSsl match {
+      case Some(s) => {
+        factory.useSslProtocol()
+        log.info(s"Activating SSL usage.")
+      }
+      case None => log.info(s"SSL not being used.")
+    }
+  }
 
   private def setVirtualHost(params: Map[String, String]): Unit = {
     val vHost = params.get(VirtualHostKey)

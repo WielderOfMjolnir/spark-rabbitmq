@@ -28,8 +28,10 @@
 
     <groupId>com.stratio.receiver</groupId>
     <artifactId>spark-rabbitmq</artifactId>
+
     <version>0.5.2-RC1-SNAPSHOT</version>
-    
+    <packaging>jar</packaging>
+
     <url>https://github.com/Stratio/RabbitMQ-Receiver</url>
     <name>Spark Streaming RabbitMQ Receiver</name>
 
